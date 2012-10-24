@@ -897,8 +897,6 @@ Distributed under the BSD License
 	        return n < 10 ? '0' + n : n;
 	    }
 
-	    Date.prototype.toJSON = function () {
-
 	// Eventually, this method will be based on the date.toISOString method.
 
 	        return this.getUTCFullYear()   + '-' +
