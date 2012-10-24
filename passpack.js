@@ -897,17 +897,6 @@ Distributed under the BSD License
 	        return n < 10 ? '0' + n : n;
 	    }
 
-	// Eventually, this method will be based on the date.toISOString method.
-
-	        return this.getUTCFullYear()   + '-' +
-	             f(this.getUTCMonth() + 1) + '-' +
-	             f(this.getUTCDate())      + 'T' +
-	             f(this.getUTCHours())     + ':' +
-	             f(this.getUTCMinutes())   + ':' +
-	             f(this.getUTCSeconds())   + 'Z';
-	    };
-
-
 		function isISODate (v) {
 			return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}){0,1}Z$/.test(v); 
 		}
