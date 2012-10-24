@@ -21,6 +21,17 @@ What Has Changed
 	- Base64Encode
 	- Base64Decode
 
+How To Use
+----------
+
+If you'd like to use this updated version of Passpack for your own uses, it is very easy.  At the bottom of the file passpack.js there is a codeblock that looks like this:  
+
+	if(typeof(MySocialNamespace) === "undefined") {
+		MySocialNamespace = Namespace;
+	}
+
+Simply change both occurences of `MySocialNamespace` to whatever namespace you would like to use.  The object will appear in the global scope.
+
 License
 -------
 **[MySocialCloud](https://mysocialcloud.com) Passpack** - 24, October 2012  
