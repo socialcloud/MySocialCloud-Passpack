@@ -1210,4 +1210,4 @@ Distributed under the BSD License
 	if(typeof(MySocialNamespace) === "undefined") {
 		MySocialNamespace = Namespace;
 	}
-});
+})();
