@@ -1,5 +1,18 @@
 /*
 
+MySocialCloud Passpack - 24, October 2012
+This is a modified version of the original Passpack:
+Host-Proof Hosting 1.0 library provided by Passpack Srl (www.passpack.com)
+
+Both the original source of Passpack as well as the 
+included libraries may have been modified in this version. 
+Dual licensed under the open source MIT license and LGPL license,
+except where overridden by the following Passpack license.
+
+
+
+
+
 Passpack Host-Proof Hosting 1.0 - Rome, 22 june 2008
 Copyright (c) 2008 Passpack Srl (www.passpack.com)
 Dual licensed under the open source MIT license and LGPL license,
@@ -36,7 +49,11 @@ Distributed under the BSD License
 
 */
 
-Passpack = new (function(){
+if(typeof(MySocialNamespace) === "undefined") {
+	MySocialNamespace = {};
+}
+
+MySocialNamespace.Passpack = new (function(){
 		this.extend = function () {
 			var a = arguments[0] || {};
 			if (typeof a == 'object') for (var j in a) this[j] = a[j];
@@ -66,10 +83,10 @@ Passpack = new (function(){
 
 
 
-Passpack.extend({
+MySocialNamespace.Passpack.extend({
 
-	crypt: new Passpack.static(),
-	utils: new Passpack.static(),
+	crypt: new MySocialNamespace.Passpack.static(),
+	utils: new MySocialNamespace.Passpack.static(),
 	_init: function () {}
 	
 });
@@ -77,7 +94,7 @@ Passpack.extend({
 
 
 
-Passpack.crypt.UTF8 = {
+MySocialNamespace.Passpack.crypt.UTF8 = {
 
 
 /**
@@ -149,7 +166,7 @@ Passpack.crypt.UTF8 = {
 
 
 
-Passpack.crypt.Base64 = {
+MySocialNamespace.Passpack.crypt.Base64 = {
 
 /**
 *
@@ -168,7 +185,7 @@ Passpack.crypt.Base64 = {
 		var i = 0, keyStr = this._keyStr;
 		if (noPlus) keyStr = keyStr.replace(/\+/,"!");
 
-		input = Passpack.crypt.UTF8.encode(input);
+		input = MySocialNamespace.Passpack.crypt.UTF8.encode(input);
 
 		while (i < input.length) {
 
@@ -228,7 +245,7 @@ Passpack.crypt.Base64 = {
 
 		}
 
-		output = Passpack.crypt.UTF8.decode(output);
+		output = MySocialNamespace.Passpack.crypt.UTF8.decode(output);
 
 		return output;
 
@@ -238,7 +255,7 @@ Passpack.crypt.Base64 = {
 
 
 
-Passpack.crypt.AES = {
+MySocialNamespace.Passpack.crypt.AES = {
 
 // AES/Rijndael algorithm for 128/192/256-bit keys
 // JavaScript implementation: Chris Veness, Movable Type Ltd: www.movable-type.co.uk
@@ -565,7 +582,7 @@ Passpack.crypt.AES = {
 
 
 
-Passpack.crypt.xxTEA = {
+MySocialNamespace.Passpack.crypt.xxTEA = {
 
 	teaencrypt: function (plaintext, key) {
 		if (plaintext.length == 0) return('');
@@ -650,7 +667,7 @@ Passpack.crypt.xxTEA = {
 
 /// improved RC4 
 
-Passpack.crypt.RC4 = {
+MySocialNamespace.Passpack.crypt.RC4 = {
 	endecrypt: function (txt,key,N,dval) {
 		
 		function exc(v,a,b) {
@@ -692,11 +709,11 @@ Passpack.crypt.RC4 = {
 
 
 
-Passpack.extend({
+MySocialNamespace.Passpack.extend({
 						
 	decode: function (algorithm, enctext, key, pars) {
 		if (!pars) pars = {};
-		var ppc = Passpack.crypt,
+		var ppc = MySocialNamespace.Passpack.crypt,
 			pretext = pars.unescape ? unescape(enctext) : enctext,
 			text = /UTF8/.test(algorithm) || pars.noBase64 ? pretext : ppc.Base64.decode(pretext,1);
 		switch (algorithm) {
@@ -727,7 +744,7 @@ Passpack.extend({
 	
 	encode: function (algorithm, plaintext, key, pars) {
 		if (!pars) pars = {};
-		var ret = plaintext, ppc = Passpack.crypt;
+		var ret = plaintext, ppc = MySocialNamespace.Passpack.crypt;
 		switch (algorithm) {
 			case 'UTF8':
 				var utf8 = ppc.UTF8.encode(plaintext);
@@ -752,6 +769,7 @@ Passpack.extend({
 						key
 					);
 				break;
+			case 'SHA256':	return ret = MySocialNamespace.Passpack.crypt.SHA256.calchex(plaintext); break;
 // this is the default algorithm:
 			case 'Base64+':
 				
@@ -764,39 +782,18 @@ Passpack.extend({
 });
 
 
-
-// Optional string methods:
-
-Passpack.quickStringMethods = false;
-// set to true if you want to implement the quick methods
-
-if (Passpack.quickStringMethods) {
-
-	String.prototype.AESenc = function(key,pars) {
-		return Passpack.encode("AES",this,key,pars);
-	};
-	
-	String.prototype.AESdec = function(key,pars) {
-		return Passpack.decode("AES",this,key,pars);
-	};
-	
-	String.prototype.xxTEAenc = function(key,pars) {
-		return Passpack.encode("xxTEA",this,key,pars);
-	};
-	
-	String.prototype.xxTEAdec = function(key,pars) {
-		return Passpack.decode("xxTEA",this,key,pars);
-	};
-	
-	String.prototype.Base64enc = function(pars) {
-		return Passpack.encode("Base64+",this,"",pars);
-	};
-	
-	String.prototype.Base64dec = function(pars) {
-		return Passpack.decode("Base64+",this,"",pars);
-	};
-
-}
+/*
+ * Removed optional string methods
+ * Functions included:
+ *
+ * String.prototype.AESenc
+ * String.prototype.AESdec
+ * String.prototype.xxTEAenc
+ * String.prototype.xxTEAdec
+ * String.prototype.Base64enc
+ * String.prototype.Base64dec
+ *
+*/
 
 
 
@@ -889,7 +886,7 @@ if (Passpack.quickStringMethods) {
 */
 
 
-Passpack.JSON = function () {
+MySocialNamespace.Passpack.JSON = function () {
 
     function f(n) {    // Format integers to have at least two digits.
         return n < 10 ? '0' + n : n;
@@ -934,115 +931,13 @@ Passpack.JSON = function () {
         '"' : '\\"',
         '\\': '\\\\'
     };
-
-    function stringify(value, whitelist) {
-        var a,          // The array holding the partial texts.
-            i,          // The loop counter.
-            k,          // The member key.
-            l,          // Length.
-            r = /["\\\x00-\x1f\x7f-\x9f]/g,
-            v;          // The member value.
-
-        switch (typeof value) {
-        case 'string':
-
-// If the string contains no control characters, no quote characters, and no
-// backslash characters, then we can safely slap some quotes around it.
-// Otherwise we must also replace the offending characters with safe sequences.
-
-            return r.test(value) ?
-                '"' + value.replace(r, function (a) {
-                    var c = m[a];
-                    if (c) {
-                        return c;
-                    }
-                    c = a.charCodeAt();
-                    return '\\u00' + Math.floor(c / 16).toString(16) +
-                                               (c % 16).toString(16);
-                }) + '"' :
-                '"' + value + '"';
-
-        case 'number':
-
-// JSON numbers must be finite. Encode non-finite numbers as null.
-
-            return isFinite(value) ? String(value) : 'null';
-
-        case 'boolean':
-        case 'null':
-            return String(value);
-
-        case 'object':
-
-// Due to a specification blunder in ECMAScript,
-// typeof null is 'object', so watch out for that case.
-
-            if (!value) {
-                return 'null';
-            }
-
-// If the object has a toJSON method, call it, and stringify the result.
-
-            if (typeof value.toJSON === 'function') {
-                return stringify(value.toJSON());
-            }
-            a = [];
-            if (typeof value.length === 'number' &&
-                    !(value.propertyIsEnumerable('length'))) {
-
-// The object is an array. Stringify every element. Use null as a placeholder
-// for non-JSON values.
-
-                l = value.length;
-                for (i = 0; i < l; i += 1) {
-                    a.push(stringify(value[i], whitelist) || 'null');
-                }
-
-// Join all of the elements together and wrap them in brackets.
-
-                return '[' + a.join(',') + ']';
-            }
-            if (whitelist) {
-
-// If a whitelist (array of keys) is provided, use it to select the components
-// of the object.
-
-                l = whitelist.length;
-                for (i = 0; i < l; i += 1) {
-                    k = whitelist[i];
-                    if (typeof k === 'string') {
-                        v = stringify(value[k], whitelist);
-                        if (v) {
-                            a.push(stringify(k) + ':' + v);
-                        }
-                    }
-                }
-            } else {
-
-// Otherwise, iterate through all of the keys in the object.
-
-                for (k in value) {
-                    if (typeof k === 'string') {
-                        v = stringify(value[k], whitelist);
-                        if (v) {
-                            a.push(stringify(k) + ':' + v);
-                        }
-                    }
-                }
-            }
-
-// Join all of the member texts together and wrap them in braces.
-
-            return '{' + a.join(',') + '}';
-        }
-    }
    
 // base filter function
 // it converts ISO date strings to Date objects:
     
     function baseFilter (k,v) {
-		if (typeof(v) != 'string' || !Passpack.JSON.isISODate(v)) return v;
-		return Passpack.JSON.ISO2Date(v);
+		if (typeof(v) != 'string' || !MySocialNamespace.Passpack.JSON.isISODate(v)) return v;
+		return MySocialNamespace.Passpack.JSON.ISO2Date(v);
 	}
 
 
@@ -1054,64 +949,8 @@ Passpack.JSON = function () {
         baseFilter: baseFilter,
 
 // standard methods:
-        stringify: stringify,
-        parse: function (text, filter) {
-            var j;
-
-            function walk(k, v) {
-                var i, n;
-                if (v && typeof v === 'object') {
-                    for (i in v) {
-                        if (Object.prototype.hasOwnProperty.apply(v, [i])) {
-                            n = walk(i, v[i]);
-                            if (n !== undefined) {
-                                v[i] = n;
-                            }
-                        }
-                    }
-                }
-                return filter(k, v);
-            }
-
-
-// Parsing happens in three stages. In the first stage, we run the text against
-// regular expressions that look for non-JSON patterns. We are especially
-// concerned with '()' and 'new' because they can cause invocation, and '='
-// because it can cause mutation. But just to be safe, we want to reject all
-// unexpected forms.
-
-// We split the first stage into 4 regexp operations in order to work around
-// crippling inefficiencies in IE's and Safari's regexp engines. First we
-// replace all backslash pairs with '@' (a non-JSON character). Second, we
-// replace all simple value tokens with ']' characters. Third, we delete all
-// open brackets that follow a colon or comma or that begin the text. Finally,
-// we look to see that the remaining characters are only whitespace or ']' or
-// ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
-
-            if (/^[\],:{}\s]*$/.test(text.replace(/\\./g, '@').
-replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
-replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-
-// In the second stage we use the eval function to compile the text into a
-// JavaScript structure. The '{' operator is subject to a syntactic ambiguity
-// in JavaScript: it can begin a block or an object literal. We wrap the text
-// in parens to eliminate the ambiguity.
-
-                j = eval('(' + text + ')');
-
-// In the optional third stage, we recursively walk the new structure, passing
-// each name/value pair to a filter function for possible transformation.
-
-
-				if (!filter) filter = Passpack.JSON.baseFilter;
-
-                return typeof filter === 'function' ? walk('', j) : j;
-            }
-
-// If the text is not JSON parseable, then a SyntaxError is thrown.
-
-            throw new SyntaxError('parseJSON');
-        }
+        stringify: JSON.stringify,
+        parse: JSON.parse
     };
 }();
 
@@ -1131,7 +970,7 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 // Modified 12 december 2006 by Francesco Sullo (www.sullof.com) in order to incapsulate the functions S, R, Ch, etc.
  
  
-Passpack.crypt.SHA256 = {
+MySocialNamespace.Passpack.crypt.SHA256 = {
 	
 	chrsz: 8,  /* bits per input character. 8 - ASCII; 16 - Unicode  */
 
@@ -1199,7 +1038,7 @@ Passpack.crypt.SHA256 = {
 // utilities:
 
 
-Passpack.utils.extend({
+MySocialNamespace.Passpack.utils.extend({
 
 
 	getBits: function (passphrase) {
@@ -1255,7 +1094,7 @@ Passpack.utils.extend({
 	passGenerator: function (chars,n) {
 		var str = "";
 		for (var j in chars) {
-			var M = Passpack.utils.charMatrix[j];
+			var M = MySocialNamespace.Passpack.utils.charMatrix[j];
 			for (var u=0;u<M.length;u+=2) {
 				for (var y=M[u];y<=M[u+1];y++) {
 					str += String.fromCharCode(y);
@@ -1278,7 +1117,7 @@ Passpack.utils.extend({
 	},	
 	
 	simplePassGenerator: function (n) {
-		return Passpack.utils.passGenerator({
+		return MySocialNamespace.Passpack.utils.passGenerator({
 				lcase: 1,
 				ucase: 1,
 				nums: 1
@@ -1287,8 +1126,8 @@ Passpack.utils.extend({
 	
 	genRandomKey: function (x, salt) {
 		var l = x && x < 64 ? x : 64,
-			ret = Passpack.hashx((salt ? salt : '') + 
-				Passpack.utils.passGenerator({
+			ret = MySocialNamespace.Passpack.hashx((salt ? salt : '') + 
+				MySocialNamespace.Passpack.utils.passGenerator({
 					lcase: 1,
 					ucase: 1, 
 					nums: 1, 
@@ -1312,11 +1151,11 @@ Passpack.utils.extend({
 	
 		
 	hashx: function (str,nohex,full) {
-		var s = Passpack.crypt.SHA256.calchex(str),
+		var s = MySocialNamespace.Passpack.crypt.SHA256.calchex(str),
 			ss = "";
 		if (!full) for (var j=0;j<64;j+=4) ss += s.substring(j,j+2);
 		else ss = s;
-		return nohex ? Passpack.utils.getStringFromHex(ss) : ss;
+		return nohex ? MySocialNamespace.Passpack.utils.getStringFromHex(ss) : ss;
 	},
 	
 	getStringFromHex: function (str,n) {
@@ -1329,3 +1168,30 @@ Passpack.utils.extend({
 
 });
 
+
+MySocialNamespace.AES_ENCVAL = function(pass,key){
+
+   return  MySocialNamespace.Passpack.encode("AES",pass,key,{nbits:256  });
+ };
+
+MySocialNamespace.AES_DECVAL = function(encstring,key){
+ 
+ 	if(encstring == null){
+ 		return '';
+ 	}
+
+  return  MySocialNamespace.Passpack.decode("AES",encstring,key,{nbits:256  });
+ // return Aes.Ctr.decrypt(encstring, key, 256);;
+};
+
+MySocialNamespace.SHA256_Encode = function(pass){
+  return  MySocialNamespace.Passpack.encode("SHA256",pass); 
+};
+
+MySocialNamespace.Base64Decode = function(pass){
+	 return  MySocialNamespace.Passpack.decode("Base64",pass);
+};
+
+MySocialNamespace.Base64Encode = function(pass){
+	 return  MySocialNamespace.Passpack.encode("Base64",pass);
+};
